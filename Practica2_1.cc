@@ -3,23 +3,25 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 
 #include <iostream>
 
 
 void pruebaError();
 void showTime();
+void checkLoop();
 
 
 int main(int argc, char ** argv){
 	
 	pruebaError();
 	showTime();
-	sleep(6);
+	checkLoop();
 	return 0;
 }
 
-//Ejercicio 1 
+//Ejercicio 1 y 2
 void pruebaError(){
 	
 	int errcode = setuid(-1);
@@ -40,14 +42,14 @@ void pruebaError(){
 	else printf("Process priviledges changed\n");
 	
 }
-//Ejercicio 2
+//Ejercicios 3, 4 y 6
 void showTime() {
 	
 	//Obtenemos el tiempo con la función time, del sistema
 	time_t tAct;
 	time(&tAct);
 	//Imprimimos el tiempo sin parsear
-	std::cout <<"Not-parsed time since epoch: "<< tAct << std::endl;
+	std::cout <<"Not-parsed time: "<< tAct << std::endl;
 	std::cout << "Parsed time:\n" << ctime(&tAct)<<std::endl;	
 		
 	struct tm * timeinfo;
@@ -61,8 +63,29 @@ void showTime() {
 	
 	std::cout << buffer << std::endl;
 	
+}
 
+//Ejercicio 5 
+void checkLoop(){
 
+	struct timespec start, end;	
+	int k = 1;
+	if(clock_gettime(CLOCK_REALTIME, &start) == -1){
+		perror("Error ocurred while measuring time: ");
+	}
+	else{
+		
+		for(int i = 0; i < 10000; i++)k++;
+		
+		clock_gettime(CLOCK_REALTIME, &end);
+		
+		double elapsed = 
+		(end.tv_sec - start.tv_sec) + ((end.tv_nsec-start.tv_nsec)*pow(10, -9));
+		
+		std::cout << "Elapsed time in the loop was: "<< elapsed << std::endl;
+		
+	
+	}
 }
 
 
