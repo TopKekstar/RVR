@@ -53,7 +53,7 @@ int main (int argc, char ** argv){
 	struct addrinfo cliente;
 	socklen_t cliente_len;
 	
-	do
+	while(!close)
 	{
 		int bytes =
 		recvfrom(sock, &buffer, BUFFER_SIZE, 0, (struct sockaddr *) &cliente, &cliente_len); 
@@ -83,7 +83,7 @@ int main (int argc, char ** argv){
 		}
   		sendto(sock, send_buff,strlen(send_buff) , 0, (struct sockaddr *) &cliente, cliente_len);
 
-	}while(!close)
+	}
 
 }
 

@@ -55,6 +55,7 @@ int main (int argc, char ** argv){
 	
 	while(!close)
 	{
+
 		int bytes =
 		recvfrom(sock, &buffer, BUFFER_SIZE, 0, (struct sockaddr *) &cliente, &cliente_len); 
 		buffer[bytes] = '\n';
