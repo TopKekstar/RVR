@@ -50,7 +50,7 @@ int main (int argc, char ** argv){
 	char send_buff[BUFFER_SIZE];
 
 	bool close = false;
-	struct addrinfo cliente;
+	struct sockaddr cliente;
 	socklen_t cliente_len;
 	
 	while(!close)
