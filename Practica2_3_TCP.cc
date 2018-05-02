@@ -52,15 +52,15 @@ int main (int argc, char ** argv){
 	char buffer [BUFFER_SIZE];
 	char send_buff[BUFFER_SIZE];
 
-	bool close = false;
+	bool closeS = false;
 	struct sockaddr cliente;
 	socklen_t cliente_len;
 	
 	//Aceptamos conexiones indefinidamente.
 	while(true)
 	{
-	
-		int client_id = accept(sock, &cliente, &cliente_len);
+		std::cout << "Awaiting connections..." << std::endl;
+		int client_s = accept(sock, &cliente, &cliente_len);
 		
 		
 		char host [NI_MAXHOST];
@@ -72,16 +72,17 @@ int main (int argc, char ** argv){
       		serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV);
 
   		std::cout << "Conexión desde Host: "<< host << " Puerto: " << serv<< std::endl;
-  		std::cout << "Client ID: " << client_id << std::endl;
+  		std::cout << "Client ID: " << client_s << std::endl;
   		
   		
-		while(!close){
-			int errcode = recv(sock, buffer, BUFFER_SIZE, 0);
+		while(!closeS){
+			int errcode = recv(client_s, buffer, BUFFER_SIZE, 0);
 			
 			if(errcode >= 0){
 				if(buffer[0] == 'q'){
 					strcpy(send_buff, "Quitting...");
-					close = true;
+					closeS = true;
+					close(client_s);
 				}
 				else if(buffer[0] == 't')
 					returnTime(send_buff, BUFFER_SIZE);		
@@ -92,10 +93,10 @@ int main (int argc, char ** argv){
 					strcpy(send_buff, "Command not recognized.");
 				}
 				
-				send(sock, send_buff, BUFFER_SIZE, 0);
+				send(client_s, send_buff, BUFFER_SIZE, 0);
 			}
 			else {
-				close = true;
+				closeS = true;
 				std::cout << "ERROR: " << gai_strerror(errcode)<< std::endl;
 			}
 		}
