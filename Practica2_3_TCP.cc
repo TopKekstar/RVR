@@ -57,7 +57,7 @@ int main (int argc, char ** argv){
 	socklen_t cliente_len;
 	
 	//Aceptamos conexiones indefinidamente.
-	while(true)
+	while(!closeS)
 	{
 		std::cout << "Awaiting connections..." << std::endl;
 		int client_s = accept(sock, &cliente, &cliente_len);
@@ -76,15 +76,18 @@ int main (int argc, char ** argv){
   				
 		closeS = false;
 		int errcode = 1;
-		while(errcode > 0){	
+		while(errcode > 0  && !closeS){
 			errcode = recv(client_s, buffer, BUFFER_SIZE, 0);
-
+			
+			if(buffer[0] == 'Q')closeS = true;
 		}
+
 		std::cout << "Connection Closed!" << std::endl;
 		close(client_s);
 		
 	}
-	close(sock);	
+	close(sock);
+	std::cout << "Server Closed!" << std::endl;	
 
 }
 
