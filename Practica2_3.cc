@@ -82,7 +82,7 @@ int main (int argc, char ** argv){
 		else {
 			strcpy(send_buff, "Command not recognized.");
 		}
-  		sendto(sock, send_buff,strlen(send_buff) , 0, (struct sockaddr *) &cliente, cliente_len);
+  		sendto(sock, send_buff,strlen(send_buff) , 0 , (struct sockaddr *) &cliente, cliente_len);
 
 	}
 
