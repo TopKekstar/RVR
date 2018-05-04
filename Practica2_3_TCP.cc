@@ -71,41 +71,20 @@ int main (int argc, char ** argv){
  		getnameinfo((struct sockaddr *) &cliente, cliente_len, host, NI_MAXHOST,
       		serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV);
 
-  		std::cout << "Conexión desde Host: "<< host << " Puerto: " << serv<< std::endl;
+  		std::cout << "Conexión desde Host: "<< host << " Puerto: " << client_s<< std::endl;
   		std::cout << "Client ID: " << client_s << std::endl;
   				
+		closeS = false;
+		int errcode = 1;
+		while(errcode > 0){	
+			errcode = recv(client_s, buffer, BUFFER_SIZE, 0);
 
-		while(!closeS){	
-			int errcode = recv(client_s, buffer, BUFFER_SIZE, 0);
-			
-
-
-
-
-			/*
-			if(errcode >= 0){
-				if(buffer[0] == 'q'){
-					strcpy(send_buff, "Quitting...");
-					closeS = true;
-				}
-				else if(buffer[0] == 't')
-					returnTime(send_buff, BUFFER_SIZE);		
-		
-				else if(buffer[0] == 'd')
-					returnDay(send_buff, BUFFER_SIZE);		
-				else {
-					strcpy(send_buff, "Command not recognized.");
-				}
-				*/
-				send(client_s, send_buff, strlen(send_buff), 0);
-			}
-			else {
-				closeS = true;
-				std::cout << "ERROR: " << gai_strerror(errcode)<< std::endl;
-			}
 		}
+		std::cout << "Connection Closed!" << std::endl;
+		close(client_s);
 		
 	}
+	close(sock);	
 
 }
 
