@@ -67,7 +67,7 @@ int Socket::bind()
 
 int Socket::send(Serializable * obj, Socket * sock)
 {
-  return sendto(sd,obj->data(), obj->size() , 0 , (struct sockaddr *) &sock->sa, &sock->sa_len);
+  return sendto(sd, obj->data(), obj->size() , 0 , &sock->sa, sock->sa_len);
 
 }
 
@@ -75,7 +75,7 @@ int Socket::send(Serializable * obj, Socket * sock)
 
 int Socket::recv(char * buffer, Socket ** sock)
 {
-  return recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, (struct sockaddr *) &sock->sa, &sock->sa_len);
+  return recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &(*sock)->sa, &(*sock)->sa_len);
 
 }
 
