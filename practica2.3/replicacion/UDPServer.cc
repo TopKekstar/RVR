@@ -39,14 +39,38 @@ void UDPServer::server_thread()
 
 void UDPServer::add_connection (Socket * s)
 {
+  //buscamos si el socket está
+  int i = 0;
+  bool notFound = true;
+  while(i<connections.size()&&notFound){
+    if(&connections.at(i)==&s)
+      notFound = false;
+    i++;
+  }
+  // si esta se mete si no se mata
+  if(notFound)
+    connections.push(s);
+  else
+    delete s;
+
 }
 
 // ----------------------------------------------------------------------------
 
 void UDPServer::del_connection (Socket * s)
 {
+  int i = 0;
+  bool found = false;
+  while(i<connections.size()&&!found){
+    if(&connections.at(i)==&s)
+      found = true;
+    i++;
+  }
+
+  if(found)
+    connections.erase(connections.begin()+i);
+
 }
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-
