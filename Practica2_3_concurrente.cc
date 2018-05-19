@@ -3,17 +3,25 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <time.h>
+#include <pthread.h>
 
 #include <iostream>
 #include <string.h>
 
 #define BUFFER_SIZE 100
+#define MAX_NUM_THREADS 10
+typedef struct {
+	struct sockaddr cliente,
+	socklen_t cliente_len;
+}threadParams;
 
 void returnDay(char * buf, size_t buflen);
 void returnTime(char * buf, size_t buflen);
+void** manageConection(void ** params);
 //El argumento 1 es la dirección ip del servidor
 //El argumento 2 es el puerto al que hacer bind
 int main (int argc, char ** argv){
+
 
 	//Variable hints para almacenar los filtros a pasarle.
 	//No es puntero para evitar accesos descontrolados a memoria dinámica
@@ -46,12 +54,10 @@ int main (int argc, char ** argv){
 	bind(sock, (struct sockaddr *)res->ai_addr, res->ai_addrlen);
 
 
-	char buffer [BUFFER_SIZE];
-	char send_buff[BUFFER_SIZE];
-
 	bool close = false;
 	struct sockaddr cliente;
 	socklen_t cliente_len;
+	int numThreads = 0;
 
 	while(!close)
 	{
@@ -60,31 +66,48 @@ int main (int argc, char ** argv){
 		recvfrom(sock, &buffer, BUFFER_SIZE, 0, (struct sockaddr *) &cliente, &cliente_len);
 		buffer[bytes] = '\n';
 
+
+		//-----------------------HILO AQUI---------------------------
+
+	}
+}
+void * manageConection (void * params)
+{
+	char buffer [BUFFER_SIZE];
+	char send_buff[BUFFER_SIZE];
+	
+	struct sockaddr * cliente;
+	socklen_t cliente_len;
+	bool connected;
+
+	while(connected)
+	{
+
 		char host [NI_MAXHOST];
 		char serv [NI_MAXSERV];
 
  		getnameinfo((struct sockaddr *) &cliente, cliente_len, host, NI_MAXHOST,
-      		serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV);
+		serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV);
 
-  		std::cout << "Conexión desde Host: "<< host << " Puerto: " << serv<< std::endl;
+		std::cout << "Conexión desde Host: "<< host << " Puerto: " << serv<< std::endl;
  	 	std::cout << "Mensaje("<< bytes <<"): "<< buffer << std::endl;
 
 
-		if(buffer[0] == 'q'){
+		if(buffer[0] == 'q')
+		{
 			strcpy(send_buff, "Quitting...");
 			close = true;
 		}
 		else if(buffer[0] == 't')
-			returnTime(send_buff, BUFFER_SIZE);
-
+					returnTime(send_buff, BUFFER_SIZE);
 		else if(buffer[0] == 'd')
-			returnDay(send_buff, BUFFER_SIZE);
+					returnDay(send_buff, BUFFER_SIZE);
 		else {
-			strcpy(send_buff, "Command not recognized.");
+					strcpy(send_buff, "Command not recognized.");
 		}
-  		sendto(sock, send_buff,strlen(send_buff) , 0 , (struct sockaddr *) &cliente, cliente_len);
+		sendto(sock, send_buff, strlen(send_buff) , 0 , (struct sockaddr *) &cliente, cliente_len);
 
-	}
+		}
 
 }
 

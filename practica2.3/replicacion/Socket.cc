@@ -14,7 +14,7 @@ bool operator== (const Socket &s1, const Socket &s2)
 	struct sockaddr_in * a, * b;
 	a = (struct sockaddr_in *)&s1.sa;
 	b = (struct sockaddr_in *)&s2.sa;
-	
+
   return(a->sin_addr.s_addr == b->sin_addr.s_addr && a->sin_family == b->sin_family &&
 	a->sin_port == b->sin_port);
 
@@ -47,7 +47,7 @@ Socket::Socket(const char * address, const char * port):sd(-1)
   	struct addrinfo * res;
 	int rc = getaddrinfo(address,port , &hints, &res);
 	if(rc != 0){
-		
+
 		//En C++ aquí lanzaríamos una excepción
 		std::cout << "Error: " << gai_strerror(rc) << std::endl;
 
@@ -80,7 +80,16 @@ int Socket::send(Serializable * obj, Socket * sock)
 
 int Socket::recv(char * buffer, Socket ** sock)
 {
-  return recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &(*sock)->sa, &(*sock)->sa_len);
+  if((*sock)==0)
+    recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, 0, 0);
+  else
+  {
+    struct sockaddr saddr;
+    socklen_t       sa_lenght;
+    recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &saddr, sa_lenght);
+    Socket * socket = new Socket(saddr,sa);
+  }
+  return 1;
 
 }
 

@@ -33,6 +33,14 @@ int UDPServer::start()
 
 void UDPServer::server_thread()
 {
+  while (true) {
+    Socket * s;
+    char * buffer;
+    socket.recv(buffer, *s);
+    
+
+
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -40,6 +48,7 @@ void UDPServer::server_thread()
 void UDPServer::add_connection (Socket * s)
 {
   //buscamos si el socket está
+  pthread_mutex_lock(&mutex);
   int i = 0;
   bool notFound = true;
   while(i<connections.size()&&notFound){
@@ -52,6 +61,8 @@ void UDPServer::add_connection (Socket * s)
     connections.push(s);
   else
     delete s;
+  pthread_mutex_unlock(&mutex);
+
 
 }
 
@@ -59,6 +70,7 @@ void UDPServer::add_connection (Socket * s)
 
 void UDPServer::del_connection (Socket * s)
 {
+  pthread_mutex_lock(&mutex);
   int i = 0;
   bool found = false;
   while(i<connections.size()&&!found){
@@ -69,6 +81,7 @@ void UDPServer::del_connection (Socket * s)
 
   if(found)
     connections.erase(connections.begin()+i);
+  pthread_mutex_unlock(&mutex);
 
 }
 
