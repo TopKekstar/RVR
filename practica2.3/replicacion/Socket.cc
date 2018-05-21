@@ -88,6 +88,7 @@ int Socket::recv(char * buffer, Socket ** sock)
     socklen_t       sa_lenght;
     recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &saddr, sa_lenght);
     Socket * socket = new Socket(saddr,sa);
+    &sock = socket;
   }
   return 1;
 
