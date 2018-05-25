@@ -1,5 +1,5 @@
 /*
-	UDP concurrent server that outputs the time or the date to the connection.
+	TCP concurrent server that outputs the time or the date to the connection.
 	Made by Francisco Lopez Bleda and Manuel Hernández for the course of Videogame Networks
 
 */
@@ -100,64 +100,3 @@ extern "C" void *start_routine (void * _st)
 	
 
 };
-
-int main (int argc, char ** argv){
-
-	//Variable hints para almacenar los filtros a pasarle.
-	//No es puntero para evitar accesos descontrolados a memoria dinámica
-	struct addrinfo hints;
-	
-	//--------------------------------------------------------------------------------------
-	//1. Inicialización del socketio
-	//--------------------------------------------------------------------------------------
-	
-	
-	//memset nos vale para poner toda una sección de memoria
-	//al mismo valor. En este caso, 0. DUDAS: terminal-> man memset
-	memset((void*)&hints, '\0', sizeof(struct addrinfo));
-	hints.ai_family = AF_INET; //Para IPv4 usamos AF_INET
-	hints.ai_socktype = SOCK_DGRAM;
-
-
-	struct addrinfo * res;
-
-	int rc = getaddrinfo(argv[1], argv[2], &hints, &res);
-
-	if(rc != 0){
-
-		std::cout << "Error: " << gai_strerror(rc) << std::endl;
-
-		return -1;
-	}
-	
-	size_t sock = 
-	socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-	
-	bind(sock, (struct sockaddr *)res->ai_addr, res->ai_addrlen);
-
-   	freeaddrinfo(res);
-   	//--------------------------------------------------------------------------------------
-   	//2. Inicializar Pool de THreads
-   	//--------------------------------------------------------------------------------------
-   	for(int i = 0; i < NUM_THREADS; i++){
-
-   		pthread_t tid;
-   		pthread_attr_t attr;
-   		
-   		pthread_attr_init(&attr);
-   		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-   		
-   		ServerThread * st = new ServerThread(sock);
-   		
-   		pthread_create(&tid, &attr, start_routine, static_cast<void *>(st));
-   	
-   	}
-   	
-	do {
-		std::cout << "Press q to close the server" << std::endl;
-		char a = getchar();
-		if(a == 'q') closeS = true;
-	}
-	while(!closeS);	
-
-}
