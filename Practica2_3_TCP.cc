@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <errno.h>
 
 #define BUFFER_SIZE 100
 
@@ -61,7 +62,8 @@ int main (int argc, char ** argv){
 	{
 		std::cout << "Awaiting connections..." << std::endl;
 		int client_s = accept(sock, &cliente, &cliente_len);
-		
+		if (client_s < 0 )
+			std::cout << strerror(errno) << std::endl;
 		
 		char host [NI_MAXHOST];
 		char serv [NI_MAXSERV];

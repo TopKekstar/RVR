@@ -15,4 +15,7 @@ g++ -o p2_3_tcp.kek Practica2_3_TCP.cc
 echo Compilando p2_3_concurrente
 g++ -o p2_3_concurrente.kek Practica2_3_concurrente.cc -lpthread
 
+echo Compilando p2_3_concurrente_TCP
+g++ -o p2_3_TCP_conc.kek Practica2_3_TCP_conc.cc -lpthread
+
 echo Compilacion Terminada
