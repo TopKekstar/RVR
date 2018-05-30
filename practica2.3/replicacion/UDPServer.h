@@ -68,7 +68,7 @@ private:
     /**
      *  Número de threads del servidor
      */
-    static const int THREAD_POOL_SIZE = 5;
+    static const int THREAD_POOL_SIZE = 1;
 
     /**
      *  Lógica principal del thread servidor

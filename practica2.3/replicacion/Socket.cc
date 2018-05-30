@@ -37,7 +37,6 @@ Socket::Socket(const char * address, const char * port):sd(-1)
 {
 
  	struct addrinfo hints;
-
 	//memset nos vale para poner toda una sección de memoria
 	//al mismo valor. En este caso, 0. DUDAS: terminal-> man memset
 	memset((void*)&hints, '\0', sizeof(struct addrinfo));
@@ -46,7 +45,7 @@ Socket::Socket(const char * address, const char * port):sd(-1)
 
   struct addrinfo * res;
 	int rc = getaddrinfo(address,port, &hints, &res);
-	if(rc != 0){
+	if(rc < 0){
 
 		//En C++ aquí lanzaríamos una excepción
 		throw std::runtime_error("No se pudo obtener la dirección.");
@@ -71,6 +70,7 @@ int Socket::bind()
 
 int Socket::send(Serializable * obj, Socket * sock)
 {
+	std::cout<<obj->data();
   return sendto(sd, obj->data(), obj->size() , 0 , &sock->sa, sock->sa_len);
 
 }
@@ -79,14 +79,13 @@ int Socket::send(Serializable * obj, Socket * sock)
 
 int Socket::recv(char * obj, Socket ** sock)
 {
-	if((*sock)==0)
+	if((*sock) != 0)
     recvfrom(sd, obj, MAX_MESSAGE_SIZE, 0, 0, 0);
   else
   {
     struct sockaddr saddr;
     socklen_t sa_length;
-    recvfrom(sd, obj, MAX_MESSAGE_SIZE, 0, &saddr, &sa_length);
-
+    recvfrom(sd, &obj, MAX_MESSAGE_SIZE, 0, &saddr, &sa_length);
     Socket * socket = new Socket(&saddr, sa_length);
     *(sock) = socket;
   }

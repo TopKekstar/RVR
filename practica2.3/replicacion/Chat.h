@@ -29,12 +29,8 @@ public:
 
     virtual int from_bin(char * bobj)
     {
-      int errno = 0;
-      size_t offset = 0;
 
-
-      _size = *((int32_t *)_data);
-      offset +=sizeof(int32_t);
+      size_t offset =sizeof(int32_t);
       memcpy(nick, _data+offset, sizeof(char)*8);
       offset+= sizeof(char)*8;
       memcpy(message, _data+offset, sizeof(char)*80);
@@ -61,7 +57,7 @@ public:
       Socket * a;
       socket.recv(buffer, &a);
       //Serialización del mensaje
-      ChatMessage msg;
+      ChatMessage msg = ChatMessage();
       msg.from_bin(buffer);
       //Envío del mensaje por la red
       for(int i = 0; i < connections.size(); i++)
@@ -76,7 +72,7 @@ class ChatClient
 public:
     ChatClient(const char * s, const char * p, const char * n):socket(s, p)
         {
-          memcpy(nick, n, sizeof(char*)*8);
+            strcpy(nick, n);
         };
 
     void input_thread()
@@ -85,18 +81,17 @@ public:
       {
         char input [80];
         std::cin >> input;
-
-        ChatMessage msg(nick, input);
+        ChatMessage msg = ChatMessage(nick, input);
         msg.to_bin();
 
-        socket.send(msg, &socket);
+        socket.send((Serializable *)&msg, &socket);
       }
     }
 
     void net_thread()
     {
       //recepción de mensajes
-      Socket * a;
+      Socket * a = NULL;
 
       while(true)
       {
