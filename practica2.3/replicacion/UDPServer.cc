@@ -55,7 +55,7 @@ void UDPServer::server_thread()
     char * buffer;
     socket.recv(buffer, &s);
     add_connection(s);
-    UDPServer::do_message(buffer);
+    do_message(buffer);
 
 
   }
