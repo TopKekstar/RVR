@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-g -I. -I./SFML/include -L./SFML/lib
+CFLAGS=-g -I. -I ./SFML/include -L ./SFML/lib
 DEPS = Socket.h UDPServer.h Game.h 
 OBJ = Socket.o UDPServer.o Game.o
 LIBS=-lpthread -lsfml-graphics -lsfml-window -lsfml-system

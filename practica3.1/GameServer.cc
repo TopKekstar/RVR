@@ -11,6 +11,11 @@
  */
 void GameServer::broadcast()
 {
+  gw.to_bin();
+  for (size_t i = 0; i < connections.size(); i++) {
+    if(socket.send(&gw,connections[i])!=0)
+      i = connections.size();
+  }
 
 }
 

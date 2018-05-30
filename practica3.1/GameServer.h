@@ -40,6 +40,7 @@ public:
      */
     void do_message(char * buffer)
     {
+      
     }
 
     /**
@@ -60,4 +61,3 @@ public:
      */
     void broadcast();
 };
-
