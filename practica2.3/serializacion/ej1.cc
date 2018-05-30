@@ -22,52 +22,52 @@ public:
 
     void to_bin()
     {						//tamaño de nombre + tamaño de x e y
-		
+
 		alloc_data(sizeof(char) * 80 + sizeof(int16_t) * 2);
 		int32_t offset = 0;
-		
+
 		memcpy(_data,&_size,sizeof(int32_t));
 		offset+=sizeof(int32_t);
-		
-		
+
+
 		memcpy(_data+offset, name, sizeof(char)*80);
 		offset+=sizeof(char)*80;
-		
-		
-		
-		memcpy(_data+offset, &x, sizeof(int16_t));	
+
+
+
+		memcpy(_data+offset, &x, sizeof(int16_t));
 		offset+=sizeof(int16_t);
-		
-		
-		
-		memcpy(_data+offset, &y, sizeof(int16_t));		
+
+
+
+		memcpy(_data+offset, &y, sizeof(int16_t));
 		offset+=sizeof(int16_t);
-		
+
     }
 
     int from_bin(char * data)
     {
     	alloc_data(sizeof(char) * 80 + sizeof(int16_t) * 2);
 		int32_t offset = 0;
-		
-		memcpy(&_size,data,sizeof(int32_t));
+
+		memcpy(&_size,_data,sizeof(int32_t));
 		offset+=sizeof(int32_t);
-		
-		
-		memcpy(name,data+offset, sizeof(char)*80);
+
+
+		memcpy(name,_data+offset, sizeof(char)*80);
 		offset+=sizeof(char)*80;
-		
-		
-		
-		memcpy(&x,data+offset, sizeof(int16_t));	
+
+
+
+		memcpy(&x,_data+offset, sizeof(int16_t));
 		offset+=sizeof(int16_t);
-		
-		
-		
-		memcpy(&y,data+offset, sizeof(int16_t));		
+
+
+
+		memcpy(&y,_data+offset, sizeof(int16_t));
 		offset+=sizeof(int16_t);
     	return 1;
-    	
+
     }
 
 public:
@@ -80,6 +80,6 @@ public:
 int main(int argc, char **argv)
 {
 	Jugador one("player one",12,345);
-	
+
 
 }

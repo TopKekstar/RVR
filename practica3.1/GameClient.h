@@ -49,7 +49,9 @@ public:
      */
     void network_render_thread()
     {
+      
 
+      gw.render(window);
     }
 
     /**
@@ -75,4 +77,3 @@ public:
      */
     int input();
 };
-

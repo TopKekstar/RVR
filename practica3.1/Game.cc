@@ -4,6 +4,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <sstream>
+#include <utility>
 
 #include "Game.h"
 
@@ -14,10 +15,53 @@
 // ----------------------------------------------------------------------------
 void GameObject::to_bin()
 {
+  alloc_data(sizeof(int16_t) * 5);
+  int32_t offset = 0;
+
+  memcpy(_data,&_size,sizeof(int32_t));
+  offset+=sizeof(int32_t);
+
+  memcpy(_data+offset, &type, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(_data+offset, &id, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(_data+offset, &x, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(_data+offset, &y, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(_data+offset, &a, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
 }
 
 int GameObject::from_bin(char * d)
 {
+  alloc_data(sizeof(int16_t) * 5);
+  int32_t offset = 0;
+
+  memcpy(&_size,d,sizeof(int32_t));
+  offset+=sizeof(int32_t);
+
+  memcpy(&type,d+offset, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(&id,d+offset, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(&x,d+offset, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(&y,d+offset, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  memcpy(&a,d+offset, sizeof(int16_t));
+  offset+=sizeof(int16_t);
+
+  return 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -186,6 +230,25 @@ void GameWorld::update_player_proxy(Player *ply)
  */
 void GameWorld::to_bin()
 {
+  std::map<int16_t, GameObject*>::iterator it = gos.begin();
+  size_t tam = gos.size();
+  it->second->to_bin();
+
+
+  int32_t gOTam=it->second->size();
+  alloc_data(gOTam*tam);
+  int32_t offset = 0;
+
+  memcpy(_data,&_size,sizeof(int32_t));
+  offset+=sizeof(int32_t);
+
+  for(it;it!=gos.end();it++){
+    it->second->to_bin();
+    memcpy(_data+offset, it->second->data(),gOTam );
+    offset+=sizeof(gOTam);
+  }
+
+
 }
 
 // ----------------------------------------------------------------------------
@@ -200,6 +263,27 @@ void GameWorld::to_bin()
  */
 int GameWorld::from_bin(char * d)
 {
+  GameObject GOAux;
+  GOAux.to_bin();
+  for (std::map<int16_t, GameObject*>::iterator it = gos.begin(); it!=gos.end(); it++) {
+    delete it->second;
+  }
+  gos.clear();
+
+  int32_t offset = 0;
+
+  memcpy(&_size,d,sizeof(int32_t));
+  offset+=sizeof(int32_t);
+
+  int count = (_size - offset)/GOAux.size();
+
+  for (size_t i = 0; i < count; i++) {
+    GameObject * obj = new GameObject();
+    obj->from_bin(d+offset);
+    offset += GOAux.size();
+    gos[obj->id]=obj;
+  }
+
+
+
 }
-
-
