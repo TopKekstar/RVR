@@ -46,7 +46,7 @@ public:
      *    @param buffer, el objeto recibido resultado de Socket::recv. Debe
      *    reconstruirse con Serializable::from_bin
      */
-    virtual void do_message(char * buffer) = 0;
+    virtual void do_message(char * buffer){};
 
 protected:
     /**
