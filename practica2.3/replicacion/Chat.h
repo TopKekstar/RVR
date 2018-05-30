@@ -16,6 +16,7 @@ public:
 
     void to_bin()
     {
+      alloc_data(sizeof(char)*8 + sizeof(char)*80);
     }
 
     virtual int from_bin(char * bobj)
@@ -60,4 +61,3 @@ private:
 
     Socket socket;
 };
-

@@ -1,5 +1,8 @@
 #include "UDPServer.h"
 #include "Serializable.h"
+#include <pthread.h>
+
+
 
 UDPServer::UDPServer(const char * serv, const char * port)
     :socket(serv, port)
@@ -27,6 +30,20 @@ extern "C" void * _server_thread(void *arg)
 
 int UDPServer::start()
 {
+    for(int i = 0; i < THREAD_POOL_SIZE; i++)
+    {
+      pthread_t tid;
+      pthread_attr_t attr;
+
+      pthread_attr_init(&attr);
+      pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+      pthread_create(&tid, &attr, _server_thread,  static_cast<void *>(this));
+
+
+
+    }
+
 }
 
 // ----------------------------------------------------------------------------
@@ -36,9 +53,9 @@ void UDPServer::server_thread()
   while (true) {
     Socket * s;
     char * buffer;
-    socket.recv(buffer, *s);
+    socket.recv(buffer, &s);
     add_connection(s);
-    do_message();
+    UDPServer::do_message(buffer);
 
 
   }
@@ -59,7 +76,7 @@ void UDPServer::add_connection (Socket * s)
   }
   // si esta se mete si no se mata
   if(notFound)
-    connections.push(s);
+    connections.push_back(s);
   else
     delete s;
   pthread_mutex_unlock(&mutex);
