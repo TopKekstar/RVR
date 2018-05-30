@@ -44,13 +44,12 @@ Socket::Socket(const char * address, const char * port):sd(-1)
 	hints.ai_family = AF_INET; //Para IPv4 usamos AF_INET
 	hints.ai_socktype = SOCK_DGRAM;
 
-  	struct addrinfo * res;
-	int rc = getaddrinfo(address,port , &hints, &res);
+  struct addrinfo * res;
+	int rc = getaddrinfo(address,port, &hints, &res);
 	if(rc != 0){
 
 		//En C++ aquí lanzaríamos una excepción
-		std::cout << "Error: " << gai_strerror(rc) << std::endl;
-
+		throw std::runtime_error("No se pudo obtener la dirección.");
 	}
   else
   {
@@ -78,17 +77,18 @@ int Socket::send(Serializable * obj, Socket * sock)
 
 // ----------------------------------------------------------------------------
 
-int Socket::recv(char * buffer, Socket ** sock)
+int Socket::recv(char * obj, Socket ** sock)
 {
-  if((*sock)==0)
-    recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, 0, 0);
+	if((*sock)==0)
+    recvfrom(sd, obj, MAX_MESSAGE_SIZE, 0, 0, 0);
   else
   {
     struct sockaddr saddr;
-    socklen_t       sa_lenght;
-    recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &saddr, sa_lenght);
-    Socket * socket = new Socket(saddr,sa);
-    &sock = socket;
+    socklen_t sa_length;
+    recvfrom(sd, obj, MAX_MESSAGE_SIZE, 0, &saddr, &sa_length);
+
+    Socket * socket = new Socket(&saddr, sa_length);
+    *(sock) = socket;
   }
   return 1;
 
