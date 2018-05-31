@@ -2,6 +2,7 @@
 #include "Serializable.h"
 
 #include <string.h>
+#include <stdio.h>
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -70,16 +71,14 @@ int Socket::bind()
 
 int Socket::send(Serializable * obj, Socket * sock)
 {
-	std::cout<<obj->data();
   return sendto(sd, obj->data(), obj->size() , 0 , &sock->sa, sock->sa_len);
-
 }
 
 // ----------------------------------------------------------------------------
 
 int Socket::recv(char * obj, Socket ** sock)
 {
-	if((*sock) != 0)
+	if((*sock) == 0)
     recvfrom(sd, obj, MAX_MESSAGE_SIZE, 0, 0, 0);
   else
   {

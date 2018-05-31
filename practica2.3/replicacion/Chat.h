@@ -4,6 +4,8 @@
 #include "Serializable.h"
 #include "Socket.h"
 #include "UDPServer.h"
+#include <stdio.h>
+#include <exception>
 
 class ChatMessage: public Serializable
 {
@@ -12,18 +14,21 @@ public:
 
     ChatMessage(const char * n, const std::string m)
     {
+      strcpy(nick, n);
+    strcpy(message, m.c_str());
     };
 
     void to_bin()
     {
-      alloc_data(sizeof(char)*8 + sizeof(char)*80);
-      size_t offset = sizeof(int32_t);
 
+      int32_t offset = sizeof(int32_t);
+      alloc_data(sizeof(char)*8 + sizeof(char)*80);
 
       memcpy(_data+offset, nick, sizeof(char)*8);
       offset += sizeof(char)*8;
 
       memcpy(_data+offset, message, sizeof(char)*80);
+
 
     }
 
@@ -56,6 +61,7 @@ public:
       //recepción de mensajes
       Socket * a;
       socket.recv(buffer, &a);
+      std::cout << "Message Received: "<< std::endl;
       //Serialización del mensaje
       ChatMessage msg = ChatMessage();
       msg.from_bin(buffer);
@@ -72,7 +78,7 @@ class ChatClient
 public:
     ChatClient(const char * s, const char * p, const char * n):socket(s, p)
         {
-            strcpy(nick, n);
+          strcpy(nick, n);
         };
 
     void input_thread()
@@ -84,7 +90,9 @@ public:
         ChatMessage msg = ChatMessage(nick, input);
         msg.to_bin();
 
-        socket.send((Serializable *)&msg, &socket);
+
+
+        socket.send(&msg, &socket);
       }
     }
 
@@ -95,8 +103,12 @@ public:
 
       while(true)
       {
+        std::cout << "A"<<std::endl;
         char * buffer;
         socket.recv(buffer, &a);
+        std::cout << "B"<<std::endl;
+        std::cout << buffer<<std::endl;
+        std::cout << "C"<<std::endl;
         //Serialización del mensaje
         ChatMessage msg;
         msg.from_bin(buffer);

@@ -2,7 +2,6 @@
 #define SERIALIZABLE_H_
 
 #include <stdlib.h>
-
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
@@ -86,7 +85,6 @@ protected:
 
         _data = (char *) malloc(data_size + sizeof(int32_t));
         _size = data_size + sizeof(int32_t);
-
         *((int32_t *) _data) = data_size;
     }
 };
